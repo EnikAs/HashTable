@@ -7,8 +7,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <cassert>
+#include <math.h>
 
-typedef int list_t;
+typedef char* list_t;
 
 const int LIST_IS_FULL = 1488;
 
@@ -27,6 +28,12 @@ enum for_fun
 {
     OK = 1337,
     NOT_OK
+};
+
+enum equallity
+{
+    EQUAL = 0,
+    NOT_EQUAL
 };
 
 enum open_file_check
@@ -63,20 +70,21 @@ enum ok_check
 
 struct ListElem 
 {
-    list_t data = 0;
-    int next = -1;
-    int prev = -1;
+    list_t data = NULL;
+    int amount = 1;
+    int next    = -1;
+    int prev    = -1;
 };
 
 struct List
 {
-    ListElem* lstelem;
-    int size = 0;
-    int capacity = 0;
-    int free = 0;
-    int head = 0;
-    int tail = 0;
-    bool sorted = false;
+    ListElem* lstelem = NULL;
+    int size          = 0;
+    int capacity      = 0;
+    int free          = 0;
+    int head          = 0;
+    int tail          = 0;
+    bool sorted       = false;
 };
 
 
@@ -106,8 +114,11 @@ int         EasyDump                (List* list, FILE* log_file = stdout);
 
 int         ListDtor                (List* list);
 
-int         ListDump                (List* list, int error = -1);
+int         ListDump                (List* list, int error, FILE* log_file);
 
 int         ListHtmlDump            (List* list);
+
+int         RepeatCleaner           (List* list, int elem);
+
 
 #endif

@@ -1,0 +1,37 @@
+digraph G{
+rankdir=UD;
+-387920096 [color = "green", style = "filled", fillcolor = "green",label =" 0 \nroma
+amount = 10
+ next 1, prev -2",shape = "octagon"];
+-387920072 [color = "green", style = "filled", fillcolor = "green",label =" 1 \nlox
+amount = 3
+ next -2, prev 0",shape = "octagon"];
+-387920048 [color = "red", style = "filled", fillcolor = "red",label =" 2 \n next 3, prev -1",shape = "hexagon"];
+-387920024 [color = "red", style = "filled", fillcolor = "red",label =" 3 \n next 4, prev -1",shape = "hexagon"];
+-387920000 [color = "red", style = "filled", fillcolor = "red",label =" 4 \n next 5, prev -1",shape = "hexagon"];
+-387919976 [color = "red", style = "filled", fillcolor = "red",label =" 5 \n next 6, prev -1",shape = "hexagon"];
+-387919952 [color = "red", style = "filled", fillcolor = "red",label =" 6 \n next 7, prev -1",shape = "hexagon"];
+-387920096 -> -387920072[style = "invis"];
+-387920072 -> -387920048[style = "invis"];
+-387920048 -> -387920024[style = "invis"];
+-387920024 -> -387920000[style = "invis"];
+-387920000 -> -387919976[style = "invis"];
+-387919976 -> -387919952[style = "invis"];
+-387919920 [color = "green", style = "filled", fillcolor = "green",label =" 0 \nsuka
+amount = 5
+ next 1, prev -2",shape = "octagon"];
+-387919896 [color = "green", style = "filled", fillcolor = "green",label =" 1 \nsuka1
+amount = 4
+ next -2, prev 0",shape = "octagon"];
+-387919872 [color = "red", style = "filled", fillcolor = "red",label =" 2 \n next 3, prev -1",shape = "hexagon"];
+-387919848 [color = "red", style = "filled", fillcolor = "red",label =" 3 \n next 4, prev -1",shape = "hexagon"];
+-387919824 [color = "red", style = "filled", fillcolor = "red",label =" 4 \n next 5, prev -1",shape = "hexagon"];
+-387919800 [color = "red", style = "filled", fillcolor = "red",label =" 5 \n next 6, prev -1",shape = "hexagon"];
+-387919776 [color = "red", style = "filled", fillcolor = "red",label =" 6 \n next 7, prev -1",shape = "hexagon"];
+-387919920 -> -387919896[style = "invis"];
+-387919896 -> -387919872[style = "invis"];
+-387919872 -> -387919848[style = "invis"];
+-387919848 -> -387919824[style = "invis"];
+-387919824 -> -387919800[style = "invis"];
+-387919800 -> -387919776[style = "invis"];
+}
