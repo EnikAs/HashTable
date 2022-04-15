@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <cassert>
 #include <math.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 
 typedef char* list_t;
 
@@ -16,9 +20,9 @@ const int LIST_IS_FULL = 1488;
 #define OK_CHECK_ON
 
 #ifdef OK_CHECK_ON
-#define $ListOkCheck(list, error) ListOkCheck(list, error)
+#define $ListOkCheck(list) ListOkCheck(list)
 #else
-#define $ListOkCheck(list, error)    
+#define $ListOkCheck(list)    
 #endif
 
 
@@ -87,6 +91,24 @@ struct List
     bool sorted       = false;
 };
 
+struct buffer 
+{
+    char* buffer;
+    int string_cunt = 0;
+    int words_cunt = 0;
+    int tmp_string_cunt = 0;
+    int buffer_size = 0;
+    int tmp_pos = 0;
+};
+
+struct Commands
+{
+    char* command;
+    int lenght;
+    buffer* buf;
+};
+
+
 
 int         ListInit                (List* list, int elem_num);
 
@@ -108,17 +130,29 @@ int         SlowSlowLogicIntoPhys   (List* list, int logic);
 
 int         logic_error_check       (List* list, int tmp_pos, int key);
 
-int         ListOkCheck             (List* list, int* error);
+int         ListOkCheck             (List* list);
 
 int         EasyDump                (List* list, FILE* log_file = stdout);
 
 int         ListDtor                (List* list);
 
-int         ListDump                (List* list, int error, FILE* log_file);
+int         ListDump                (List* list, FILE* log_file);
 
 int         ListHtmlDump            (List* list);
 
 int         RepeatCleaner           (List* list, int elem);
+
+Commands*   init_all_commands       (FILE* file_stream);
+
+size_t      scanf_file_size         (FILE* input_file);
+
+int         buffer_init             (buffer* buf, FILE* file_stream);
+
+Commands*   commands_init           (buffer* buf);
+
+int         get_all_commands        (Commands* com, buffer* buf);
+
+int         get_one_command         (Commands* com, buffer* buf);
 
 
 #endif

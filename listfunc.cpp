@@ -67,7 +67,7 @@ int ListInsertTail(List* list, list_t value)
 
     list->lstelem[list->head].prev = -2;
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
 
     return OK;
 }
@@ -76,7 +76,7 @@ int ListInsertHead(List* list, list_t value)
 {
     assert(list);
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
 
     list->sorted = false;
 
@@ -98,7 +98,7 @@ int ListInsertHead(List* list, list_t value)
 
     list->lstelem[list->tail].next = -2;
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
     
     return OK;
 }
@@ -107,7 +107,7 @@ int ListInsert (List* list, list_t value, int pos_init)// pos_init - элеме�
 {
     assert(list);
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
 
     list->sorted = false;
 
@@ -126,7 +126,7 @@ int ListInsert (List* list, list_t value, int pos_init)// pos_init - элеме�
     list->lstelem[list->lstelem[pos_init].next].prev = tmp_pos;
     list->lstelem[pos_init].next = tmp_pos;
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
 
     return OK;
 }
@@ -135,7 +135,7 @@ int ListDelete (List* list, int pos_init)
 {
     assert(list);
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
     
     list->size -= 1;
 
@@ -176,11 +176,13 @@ int ListDelete (List* list, int pos_init)
     list->lstelem[pos_init].prev = -1;
     list->free = pos_init;
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
         return OK;
     }
     else 
         return NOT_OK;
+    
+    return OK;
 }
 
 int ListResize (List* list)
@@ -201,7 +203,7 @@ int ListResize (List* list)
         list->lstelem[i].prev = -1;
     }
 
-    $ListOkCheck(list, &error);
+    $ListOkCheck(list);
     return CORRECT_REALLOC;
 }
 
@@ -254,6 +256,7 @@ int SlowSlowLinearaise (List* list)
     list->tail = list->size - 1;
     list->sorted = true;
     
+    free(tmp_data);
 
     return OK;
 }
@@ -302,15 +305,15 @@ int logic_error_check (List* list, int tmp_pos, int key)
     
 }
 
-int ListOkCheck (List* list, int* error)
+int ListOkCheck (List* list)
 {
     assert(list);
 
     if (list->size > list->capacity)
     {
         printf("Size is bigger than capacity!!!");
-        *error = SIZE_ERROR;
-        //ListDump(list, *error);
+        error = SIZE_ERROR;
+        //ListDump(list, error);
     }
 
     int cunt = 0;
@@ -325,8 +328,8 @@ int ListOkCheck (List* list, int* error)
         if (cunt > list->size + 2)
         {
             printf ("There is loop in this list!!!");
-            *error = LOOP_ERROR;
-            //ListDump(list, *error);
+            error = LOOP_ERROR;
+            //ListDump(list, error);
         }
     }
     tmp_pos = list->head;
@@ -337,14 +340,14 @@ int ListOkCheck (List* list, int* error)
             if (list->lstelem[tmp_pos].prev != -2)
             {
                 printf("Prev before head != -2");
-                *error = HEAD_PREV_ERROR;
-                //ListDump(list, *error);
+                error = HEAD_PREV_ERROR;
+                //ListDump(list, error);
             }
 
             if (logic_error_check(list, tmp_pos, PREV_CHECK) == LOGIC_PREV_ERROR)
             {
-                *error = LOGIC_PREV_ERROR;
-                //ListDump(list, *error);
+                error = LOGIC_PREV_ERROR;
+                //ListDump(list, error);
             }
         }
         else if (tmp_pos == list->tail)         //последний элемент
@@ -352,34 +355,36 @@ int ListOkCheck (List* list, int* error)
             if (list->lstelem[tmp_pos].next != -2)
             {
                 printf("Next after tail != -2");
-                *error = TAIL_NEXT_ERROR;
-                //ListDump(list, *error);
+                error = TAIL_NEXT_ERROR;
+                //ListDump(list, error);
             }
 
             if (logic_error_check(list, tmp_pos, NEXT_CHECK) == LOGIC_NEXT_ERROR)
             {
-                *error = LOGIC_NEXT_ERROR;
-                //ListDump(list, *error);
+                error = LOGIC_NEXT_ERROR;
+                //ListDump(list, error);
             }
         }                                       
         else                                    //остальные элементы
         {
             if (logic_error_check(list, tmp_pos, NEXT_CHECK) == LOGIC_NEXT_ERROR)
             {
-                *error = LOGIC_NEXT_ERROR;
-                //ListDump(list, *error);
+                error = LOGIC_NEXT_ERROR;
+                //ListDump(list, error);
             }
 
             if (logic_error_check(list, tmp_pos, PREV_CHECK) == LOGIC_PREV_ERROR)
             {
-                *error = LOGIC_PREV_ERROR;
-                //ListDump(list, *error);
+                error = LOGIC_PREV_ERROR;
+                //ListDump(list, error);
             }
         }
         tmp_pos = list->lstelem[tmp_pos].next;
     }
 
-    *error = LOGIC_IS_OK;
+    error = LOGIC_IS_OK;
+
+    return OK;
 }
 
 int EasyDump (List* list, FILE* log_file)
@@ -404,9 +409,12 @@ int ListDtor (List* list)
     {
         list->lstelem[i].data = 0;
     }
-    free(list);
+    free(list->lstelem);
+    //free(list);
+
+    return OK;
 }
-int ListDump(List* list, int error, FILE* log_file)
+int ListDump(List* list, FILE* log_file)
 {
     assert(list);
 
@@ -416,19 +424,19 @@ int ListDump(List* list, int error, FILE* log_file)
     {
         if (list->lstelem[i].prev == -1)
         {
-            fprintf(log_file, "%d [color = \"red\", style = \"filled\", fillcolor = \"red\","
+            fprintf(log_file, "ptr%p [color = \"red\", style = \"filled\", fillcolor = \"red\","
                     "label =\" %d \\n next %d, prev %d\",shape = \"hexagon\"];\n",
-                    &(list->lstelem[i]), i, list->lstelem[i].next, list->lstelem[i].prev);
+                    (void*)&(list->lstelem[i]), i, list->lstelem[i].next, list->lstelem[i].prev);
         }
         else
-            fprintf(log_file, "%d [color = \"green\", style = \"filled\", fillcolor = \"green\","
+            fprintf(log_file, "ptr%p [color = \"green\", style = \"filled\", fillcolor = \"green\","
                     "label =\" %d \\n%s\namount = %d\n next %d, prev %d\",shape = \"octagon\"];\n",
-                    &(list->lstelem[i]), i, list->lstelem[i].data, list->lstelem[i].amount, list->lstelem[i].next, list->lstelem[i].prev);
+                    (void*)&(list->lstelem[i]), i, list->lstelem[i].data, list->lstelem[i].amount, list->lstelem[i].next, list->lstelem[i].prev);
     }
 
     for (int i = 0 ; i < list->capacity - 1 ; i++)
     {
-        fprintf(log_file, "%d -> %d[style = \"invis\"];\n", &(list->lstelem[i]), &(list->lstelem[i+1]));
+        fprintf(log_file, "ptr%p -> ptr%p[style = \"invis\"];\n", (void*)&(list->lstelem[i]), (void*)&(list->lstelem[i+1]));
     }
 
     char errorstr[1000] = "";
@@ -462,6 +470,11 @@ int ListDump(List* list, int error, FILE* log_file)
             strcpy(errorstr, "There is loop in this list!");
             fprintf(log_file, "322 [color = \"red\", style = \"filled\", fillcolor = \"red\", label =\" ERROR \\n %s\"];\n", errorstr);
             break;
+        default:
+            strcpy(errorstr, "There is loop in this list!");
+            fprintf(log_file, "322 [color = \"red\", style = \"filled\", fillcolor = \"red\", label =\" ERROR \\n %s\"];\n", errorstr);
+            break;
+
     }
 /*
     fprintf(log_file, "-1 [label =\" List \\n size = %d, capacity = %d, head = %d, tail = %d, free = %d \"];\n",
@@ -497,6 +510,7 @@ int ListHtmlDump (List* list)
     FILE* log_html = fopen("log_file.html", "w");
     if (log_html == NULL)
         return FILE_NOT_OPENED;
+
     fprintf(log_html, "<pre>");
     fprintf(log_html, "<center><font size = \"7\">THIS IS LIST LOG !!!</font></center>");
     EasyDump(list, log_html);
@@ -513,7 +527,6 @@ int RepeatCleaner (List* list, int elem)
 {
     int elem_strlen = strlen(list->lstelem[elem].data);
     int cur_elem    = list->lstelem[elem].next;
-    int size        = list->size;
     int tmp_elem    = -3;
     
     while (cur_elem != -2)

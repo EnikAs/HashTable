@@ -23,6 +23,19 @@ HashTable* HashTableInit (int TableSize, int ListSize, long long (*hashfunc) (ch
     return table;
 }
 
+int HashTableDtor (HashTable* table)
+{
+    for (int i = 0 ; i < table->size ; i++)
+    {
+        ListDtor(&(table->lists[i]));
+    }
+
+    free(table->lists);
+    free(table);
+
+    return 0;
+}
+
 long long HashFunc1 (char* ch, int leng)  //это просто единичка
 {
     return 1;
@@ -43,6 +56,7 @@ long long HashFunc3 (char* ch, int leng)  //это просто длина сл�
 long long HashFunc4 (char* ch, int leng)  //сумма ASCII кодов слова
 {
     long long hash = 0;
+    
     for (int i = 0 ; i < leng ; i++)
     {
         hash += ch[i];
@@ -126,13 +140,20 @@ int HashTableDump (HashTable* table)
 
     for (int i = 0 ; i < table->size ; i++)
     {
-        ListDump(&(table->lists[i]), -1, log_file);
+        ListDump(&(table->lists[i]), log_file);
     }
 
     fprintf(log_file, "}");
     fclose(log_file);
 
-    system ("dot -Tpng logfile.dot -o list.png");
+    int sys_ret = system ("dot -Tpng logfile.dot -o list.png");
+
+    if (sys_ret != 0)
+    {
+        printf("Error was detected in \"system\" function");
+    }
+
+    return 0;
 }
 
 int HashTableRepeatCleaner (HashTable* table)
@@ -141,4 +162,120 @@ int HashTableRepeatCleaner (HashTable* table)
     {
         RepeatCleaner(&(table->lists[i]), table->lists[i].head);
     }
+
+    return 0;
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////
+Commands* init_all_commands (FILE* file_stream)
+{
+    assert(file_stream);
+
+    buffer* buf = (buffer*) calloc(1, sizeof(buffer));
+
+    buffer_init(buf, file_stream);
+
+    Commands* com = (Commands*) calloc(1, sizeof(Commands));
+
+    com = commands_init(buf);
+    
+    get_all_commands(com, buf);
+
+    com->buf = buf;
+
+    //free(com);
+    //free(buf->buffer);
+
+    return com;
+}
+
+size_t scanf_file_size (FILE* input_file)
+{
+    struct stat file;
+    if ( fstat(fileno(input_file), &file ) == -1 )
+    {
+        printf("FILE READING ERROR");
+        return EOF;
+    }
+
+    return file.st_size;
+}
+
+
+int buffer_init (buffer* buf, FILE* file_stream)
+{
+    
+    buf->buffer_size = scanf_file_size(file_stream);
+    
+    buf->buffer = (char*) calloc(buf->buffer_size, sizeof(char));
+    
+    if (buf->buffer == NULL)
+    {
+        printf("BUFFER MEMORY CALLOCATION ERROR\n");
+    }
+    
+    buf->buffer_size = fread(buf->buffer, sizeof(char), buf->buffer_size, file_stream);
+
+    for (int i = 0 ; i < buf->buffer_size ; i++)
+    {
+        if (buf->buffer[i] == '\0' || buf->buffer[i] == '\n' || buf->buffer[i] == ' ')
+        {
+            buf->words_cunt += 1;
+        }
+    }
+        
+    return 0;
+}
+
+Commands* commands_init (buffer* buf)
+{
+    Commands* com = (Commands*) calloc(buf->words_cunt + 1, sizeof(Commands));// СТАЛО
+    if (com == NULL)
+    {   
+        printf("COMMANDS ARRAY MEMORY CALLOCATION ERROR!!!");
+        return NULL;
+    }
+
+    return com;
+}
+
+int get_all_commands (Commands* com, buffer* buf)
+{
+    int end_check = -1;
+    
+    buf->words_cunt = 0;
+
+    while (end_check != END_OF_FILE)
+    {
+        end_check = get_one_command(com, buf);
+    }
+
+    return 0;
+}
+
+#define CUR_SYM buf->buffer[buf->tmp_pos]
+
+int get_one_command (Commands* com, buffer* buf)
+{
+    com[buf->words_cunt].command = ((char*)buf->buffer + buf->tmp_pos);
+
+    while(CUR_SYM != '\n' && CUR_SYM != '\0' && CUR_SYM != ' ')
+    {
+        buf->tmp_pos += 1;
+    }
+    CUR_SYM = '\0';
+
+    buf->tmp_pos += 1;
+
+    com[buf->words_cunt].lenght = ((char*)buf->buffer + buf->tmp_pos) - com[buf->words_cunt].command;
+
+    if (buf->tmp_pos >= buf->buffer_size)
+    {
+        return END_OF_FILE;
+    }
+
+    buf->words_cunt += 1;
+
+    return -1;
+}
+
+#undef CUR_SYM

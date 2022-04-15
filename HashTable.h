@@ -23,7 +23,11 @@ enum PresenceCheck
     NO = -1,
 };
 
+const int END_OF_FILE = 322;
+
 HashTable* HashTableInit (int TableSize, int ListSize, long long (*hashfunc) (char* word, int leng));
+
+int HashTableDtor (HashTable* table);
 
 long long HashFunc1 (char* ch, int leng);
 
@@ -42,6 +46,7 @@ int HashTableInsert (HashTable* table, char* word, int wordsize);
 int HashTableDump (HashTable* table);
 
 int HashTableRepeatCleaner (HashTable* table);
+
 
 
 #endif
