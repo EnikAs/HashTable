@@ -17,7 +17,7 @@ typedef char* list_t;
 
 const int LIST_IS_FULL = 1488;
 
-#define OK_CHECK_ON
+#define OK_CHECK_OFF
 
 #ifdef OK_CHECK_ON
 #define $ListOkCheck(list) ListOkCheck(list)
@@ -105,7 +105,12 @@ struct Commands
 {
     char* command;
     int lenght;
+};
+
+struct TableInputData
+{
     buffer* buf;
+    Commands* com;
 };
 
 
@@ -142,7 +147,7 @@ int         ListHtmlDump            (List* list);
 
 int         RepeatCleaner           (List* list, int elem);
 
-Commands*   init_all_commands       (FILE* file_stream);
+TableInputData*   init_all_commands (FILE* file_stream);
 
 size_t      scanf_file_size         (FILE* input_file);
 
@@ -153,6 +158,5 @@ Commands*   commands_init           (buffer* buf);
 int         get_all_commands        (Commands* com, buffer* buf);
 
 int         get_one_command         (Commands* com, buffer* buf);
-
 
 #endif

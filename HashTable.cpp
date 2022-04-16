@@ -56,7 +56,7 @@ long long HashFunc3 (char* ch, int leng)  //это просто длина сл�
 long long HashFunc4 (char* ch, int leng)  //сумма ASCII кодов слова
 {
     long long hash = 0;
-    
+
     for (int i = 0 ; i < leng ; i++)
     {
         hash += ch[i];
@@ -98,6 +98,10 @@ int HashTableFind (HashTable* table, char* word, int wordsize, int key)
                     table->lists[listnum].lstelem[cur_lst_elem].amount += 1;
                     return 0;
 
+                case DELETE:
+                    ListDelete(&(table->lists[listnum]), cur_lst_elem);
+                    return 0;
+
                 default:
                     printf("INCORRECT KEY IN HASHTABLEFIND FUNCTION!!!!!!!!!!!!!!!\n");
                     return -1;
@@ -118,6 +122,10 @@ int HashTableFind (HashTable* table, char* word, int wordsize, int key)
             ListInsertTail( &(table->lists[listnum]), word);
             return 0;
         
+        case DELETE:
+            printf("I cant delete element \"%s\" - it's not found", word);
+            return 0;
+
         default:
             printf("INCORRECT KEY IN HASHTABLEFIND FUNCTION!!!!!!!!!!!!!!!\n");
             return -1;
@@ -150,7 +158,7 @@ int HashTableDump (HashTable* table)
 
     if (sys_ret != 0)
     {
-        printf("Error was detected in \"system\" function");
+        printf("Error was detected in \"system\" function\n");
     }
 
     return 0;
@@ -166,7 +174,7 @@ int HashTableRepeatCleaner (HashTable* table)
     return 0;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
-Commands* init_all_commands (FILE* file_stream)
+TableInputData* init_all_commands (FILE* file_stream)
 {
     assert(file_stream);
 
@@ -180,12 +188,12 @@ Commands* init_all_commands (FILE* file_stream)
     
     get_all_commands(com, buf);
 
-    com->buf = buf;
+    TableInputData* InpTable = (TableInputData*) calloc(1, sizeof(TableInputData));
 
-    //free(com);
-    //free(buf->buffer);
+    InpTable->buf = buf;
+    InpTable->com = com;
 
-    return com;
+    return InpTable;
 }
 
 size_t scanf_file_size (FILE* input_file)
@@ -205,6 +213,7 @@ int buffer_init (buffer* buf, FILE* file_stream)
 {
     
     buf->buffer_size = scanf_file_size(file_stream);
+    printf("%d - buf size after file scan\n", buf->buffer_size);
     
     buf->buffer = (char*) calloc(buf->buffer_size, sizeof(char));
     
@@ -214,15 +223,47 @@ int buffer_init (buffer* buf, FILE* file_stream)
     }
     
     buf->buffer_size = fread(buf->buffer, sizeof(char), buf->buffer_size, file_stream);
+    
+    int i_to_save = 0;
+
+    bool flag = false;
 
     for (int i = 0 ; i < buf->buffer_size ; i++)
     {
-        if (buf->buffer[i] == '\0' || buf->buffer[i] == '\n' || buf->buffer[i] == ' ')
+        if (buf->buffer[i] == '\n' || buf->buffer[i] == '\0' || buf->buffer[i] == ' ')
         {
-            buf->words_cunt += 1;
+            if (flag == false)
+            {
+                buf->words_cunt += 1;
+                flag = true;
+                buf->buffer[i_to_save] = buf->buffer[i];
+                i_to_save += 1;
+            }
+            else
+            {
+
+            }
+        }
+        else
+        {
+            flag = false;
+
+            buf->buffer[i_to_save] = buf->buffer[i];
+            i_to_save += 1;
         }
     }
-        
+
+    buf->words_cunt += 1;
+    //printf("%.*s\n", i_to_save, buf->buffer);   
+
+    printf("%d - buf size after cycle\n", buf->buffer_size);
+
+    printf("%d - words counter after count\n", buf->words_cunt);
+
+    buf->buffer_size = i_to_save;
+
+    printf("%d - buf size after i_to_save\n", buf->buffer_size);
+
     return 0;
 }
 
@@ -243,6 +284,8 @@ int get_all_commands (Commands* com, buffer* buf)
     int end_check = -1;
     
     buf->words_cunt = 0;
+
+    int cunt = 0;
 
     while (end_check != END_OF_FILE)
     {
@@ -268,12 +311,12 @@ int get_one_command (Commands* com, buffer* buf)
 
     com[buf->words_cunt].lenght = ((char*)buf->buffer + buf->tmp_pos) - com[buf->words_cunt].command;
 
+    buf->words_cunt += 1;
+
     if (buf->tmp_pos >= buf->buffer_size)
     {
         return END_OF_FILE;
     }
-
-    buf->words_cunt += 1;
 
     return -1;
 }

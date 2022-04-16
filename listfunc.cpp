@@ -425,19 +425,19 @@ int ListDump(List* list, FILE* log_file)
         if (list->lstelem[i].prev == -1)
         {
             fprintf(log_file, "ptr%p [color = \"red\", style = \"filled\", fillcolor = \"red\","
-                    "label =\" %d \\n next %d, prev %d\",shape = \"hexagon\"];\n",
-                    (void*)&(list->lstelem[i]), i, list->lstelem[i].next, list->lstelem[i].prev);
+                    "label =\" %d \",shape = \"hexagon\"];\n",
+                    (void*)&(list->lstelem[i]), i);
         }
         else
             fprintf(log_file, "ptr%p [color = \"green\", style = \"filled\", fillcolor = \"green\","
-                    "label =\" %d \\n%s\namount = %d\n next %d, prev %d\",shape = \"octagon\"];\n",
-                    (void*)&(list->lstelem[i]), i, list->lstelem[i].data, list->lstelem[i].amount, list->lstelem[i].next, list->lstelem[i].prev);
+                    "label =\" %d \\n%s\namount = %d\",shape = \"octagon\"];\n",
+                    (void*)&(list->lstelem[i]), i, list->lstelem[i].data, list->lstelem[i].amount);
     }
 
-    for (int i = 0 ; i < list->capacity - 1 ; i++)
-    {
-        fprintf(log_file, "ptr%p -> ptr%p[style = \"invis\"];\n", (void*)&(list->lstelem[i]), (void*)&(list->lstelem[i+1]));
-    }
+    //for (int i = 0 ; i < list->capacity - 1 ; i++)
+    //{
+    //    fprintf(log_file, "ptr%p -> ptr%p[style = \"invis\"];\n", (void*)&(list->lstelem[i]), (void*)&(list->lstelem[i+1]));
+   // }
 
     char errorstr[1000] = "";
     switch(error)
@@ -467,11 +467,11 @@ int ListDump(List* list, FILE* log_file)
             fprintf(log_file, "322 [color = \"red\", style = \"filled\", fillcolor = \"red\", label =\" ERROR \\n %s\"];\n", errorstr);
             break;
         case LOOP_ERROR:
-            strcpy(errorstr, "There is loop in this list!");
+            strcpy(errorstr, "There is loop in this list!\n");
             fprintf(log_file, "322 [color = \"red\", style = \"filled\", fillcolor = \"red\", label =\" ERROR \\n %s\"];\n", errorstr);
             break;
         default:
-            strcpy(errorstr, "There is loop in this list!");
+            strcpy(errorstr, "Unknown error !\n");
             fprintf(log_file, "322 [color = \"red\", style = \"filled\", fillcolor = \"red\", label =\" ERROR \\n %s\"];\n", errorstr);
             break;
 

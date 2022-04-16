@@ -14,7 +14,8 @@ enum FindInTableKey
 {
     PRESENCE = 228,
     AMOUNT,
-    INSERT
+    INSERT,
+    DELETE
 };
 
 enum PresenceCheck

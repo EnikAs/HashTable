@@ -8,29 +8,32 @@ int main()
     if (input_file == NULL)
         printf("Shit happends, incorrect file name!\n");
 
-    HashTable* table = HashTableInit(2, 7, &HashFunc2);
+    HashTable* table = HashTableInit(100, 100, &HashFunc2);
 
-    Commands* com = init_all_commands(input_file);
+    TableInputData* InpData = NULL;
 
-    PRINT_LINE
+    InpData = init_all_commands(input_file);
 
-    for (int i = 0 ; i < com->buf->words_cunt; i++)
+    printf("%d - words counter in main before for cycle\n", InpData->buf->words_cunt);
+    for (int i = 0 ; i < InpData->buf->words_cunt; i++)
     {
-        HashTableInsert(table, com[i].command, com[i].lenght);
+        if (InpData->com[i].command != NULL)
+        {
+            HashTableInsert(table, InpData->com[i].command, InpData->com[i].lenght);
+        }
     }
 
-    PRINT_LINE
-
-    HashTableDump(table);
-
-    PRINT_LINE
-
+    //HashTableDump(table);
+    
+    char str[7] = "bitch.";
+    int am = HashTableFind(table, str, 7, AMOUNT);
+    printf("%d - ammount of %s\n", am, str);
+    
     HashTableDtor(table);
 
-    PRINT_LINE
-
-    free(com->buf);
-    free(com);
+    free(InpData->com);
+    free(InpData->buf);
+    free(InpData);
 
     return 0;
 }
