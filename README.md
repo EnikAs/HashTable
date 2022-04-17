@@ -40,7 +40,7 @@
 ## 4 функция - авторский ROR
 
 Для лучшего понимания - см код функции ниже
-
+``` cpp
 unsigned long long HashFunc5 (char* word, int leng)
 {
     unsigned long long H0 = word[0];
@@ -52,6 +52,7 @@ unsigned long long HashFunc5 (char* word, int leng)
 
     return H0;
 }
+```
 
 ![ROR1024](https://user-images.githubusercontent.com/89395114/163723953-94341ce5-9c30-4a8f-8405-60f4389a38e7.png)
 
