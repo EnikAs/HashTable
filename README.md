@@ -85,4 +85,3 @@ unsigned long long HashFunc5 (char* word, int leng)
 ## Вывод 
 
 Используйте хорошие хеш функции, а не вcякое ~~говно~~... 
-~~Арман лох~~
