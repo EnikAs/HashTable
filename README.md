@@ -41,7 +41,7 @@
 
 Для лучшего понимания - см код функции ниже
 ``` cpp
-unsigned long long HashFunc5 (char* word, int leng)
+unsigned long long HashFunc4 (char* word, int leng)
 {
     unsigned long long H0 = word[0];
 
