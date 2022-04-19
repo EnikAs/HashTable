@@ -8,7 +8,7 @@ int main()
     if (input_file == NULL)
         printf("Shit happends, incorrect file name!\n");
 
-    HashTable* table = HashTableInit(1024, 200, &murmurHash);
+    HashTable* table = HashTableInit(20000, 100, &murmurHash);
 
     TableInputData* InpData = NULL;
 
