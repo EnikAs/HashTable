@@ -28,7 +28,7 @@ Refs = 450 млн
 
 ## После оптимизации
 
-![Screenshot from 2022-04-19 15-59-05](https://user-images.githubusercontent.com/89395114/1conveer64009512-60b473e8-5470-400b-9fef-370ff9880711.png)
+![Screenshot from 2022-04-19 15-59-05](https://user-images.githubusercontent.com/89395114/164012038-3c702e59-1109-4b97-81ac-c9f645c52ed8.png)
 
 Refs = 272 млн
 
@@ -45,11 +45,4 @@ Refs = 272 млн
 __Итого : программа стала работать на 40% быстрее, то есть примерно в 1,7 раза.__
 
 КПД = 43. 
-
-
-
-
-
-
-
 
