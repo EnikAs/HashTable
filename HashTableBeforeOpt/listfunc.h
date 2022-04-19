@@ -76,6 +76,7 @@ struct ListElem
 {
     list_t data = NULL;
     int amount = 1;
+    int lenght  = 0;
     int next    = -1;
     int prev    = -1;
 };
@@ -96,13 +97,13 @@ struct List
 
 int         ListInit                (List* list, int elem_num);
 
-void        SetListElem             (List* list, int elem_num, list_t data, int next, int prev);
+void        SetListElem             (List* list, int elem_num, list_t data, int next, int prev, int lenght);
 
-int         ListInsertTail          (List* list, list_t value);
+int         ListInsertTail          (List* list, list_t value, int lenght = 0);
 
-int         ListInsertHead          (List* list, list_t value);
+int         ListInsertHead          (List* list, list_t value, int lenght = 0);
 
-int         ListInsert              (List* list, list_t value, int pos_init = -1);
+int         ListInsert              (List* list, list_t value, int pos_init = -1, int lengh = 0);
 
 int         ListDelete              (List* list, int pos_init);
 

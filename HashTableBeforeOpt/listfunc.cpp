@@ -33,17 +33,18 @@ int ListInit (List* list, int elem_num)
     }
 }
 
-void SetListElem(List* list, int elem_num, list_t data, int next, int prev)
+void SetListElem(List* list, int elem_num, list_t data, int next, int prev, int lenght)
 {
     assert(list);
 
+    list->lstelem[elem_num].lenght = lenght;
     list->lstelem[elem_num].data   = data;
     list->lstelem[elem_num].next   = next;
     list->lstelem[elem_num].prev   = prev;
     list->lstelem[elem_num].amount = 1;
 }
 
-int ListInsertTail(List* list, list_t value)
+int ListInsertTail(List* list, list_t value, int lenght)
 {
     
     assert(list);
@@ -61,7 +62,7 @@ int ListInsertTail(List* list, list_t value)
     
     list->lstelem[list->tail].next = tmp_pos;
 
-    SetListElem(list, tmp_pos, value, -2, list->tail);// -2 means the end of list
+    SetListElem(list, tmp_pos, value, -2, list->tail, lenght);// -2 means the end of list
 
     list->tail = tmp_pos;
 
@@ -72,7 +73,7 @@ int ListInsertTail(List* list, list_t value)
     return OK;
 }
 
-int ListInsertHead(List* list, list_t value)
+int ListInsertHead(List* list, list_t value, int lenght)
 {
     assert(list);
 
@@ -93,7 +94,7 @@ int ListInsertHead(List* list, list_t value)
 
     list->lstelem[list->head].prev = tmp_pos;
 
-    SetListElem(list, tmp_pos, value, list->head, -2);// -2 means the start of list
+    SetListElem(list, tmp_pos, value, list->head, -2, lenght);// -2 means the start of list
     list->head = tmp_pos;
 
     list->lstelem[list->tail].next = -2;
@@ -103,7 +104,7 @@ int ListInsertHead(List* list, list_t value)
     return OK;
 }
 
-int ListInsert (List* list, list_t value, int pos_init)// pos_init - элемент, после которого мы добавляем новый
+int ListInsert (List* list, list_t value, int pos_init, int lenght)// pos_init - элемент, после которого мы добавляем новый
 {
     assert(list);
 
@@ -121,7 +122,7 @@ int ListInsert (List* list, list_t value, int pos_init)// pos_init - элеме�
     list->free = list->lstelem[tmp_pos].next;
     list->size += 1;
 
-    SetListElem(list, tmp_pos, value, list->lstelem[pos_init].next, pos_init);
+    SetListElem(list, tmp_pos, value, list->lstelem[pos_init].next, pos_init, lenght);
 
     list->lstelem[list->lstelem[pos_init].next].prev = tmp_pos;
     list->lstelem[pos_init].next = tmp_pos;
@@ -232,22 +233,22 @@ int SlowSlowLinearaise (List* list)
     {
         if (tmp_pos == 0) // первый элемент 
         {
-            SetListElem(list, tmp_pos, tmp_data[tmp_pos], tmp_pos + 1, -2);
+            SetListElem(list, tmp_pos, tmp_data[tmp_pos], tmp_pos + 1, -2, strlen((char*)tmp_data[tmp_pos]));
         }
 
         else if (tmp_pos == list->size - 1) // последний элемент
         {
-            SetListElem(list, tmp_pos, tmp_data[tmp_pos], -2, tmp_pos - 1);
+            SetListElem(list, tmp_pos, tmp_data[tmp_pos], -2, tmp_pos - 1, strlen((char*)tmp_data[tmp_pos]));
         }
 
         else if (tmp_pos < list->size) // упорядоченные элементы
         {
-            SetListElem(list, tmp_pos, tmp_data[tmp_pos], tmp_pos + 1, tmp_pos - 1);
+            SetListElem(list, tmp_pos, tmp_data[tmp_pos], tmp_pos + 1, tmp_pos - 1, strlen((char*)tmp_data[tmp_pos]));
         } 
 
         else if (tmp_pos >= list->size) // свободные элементы
         {
-            SetListElem(list, tmp_pos, tmp_data[tmp_pos], tmp_pos + 1, -1);
+            SetListElem(list, tmp_pos, tmp_data[tmp_pos], tmp_pos + 1, -1, strlen((char*)tmp_data[tmp_pos]));
         }
     }
 
@@ -518,45 +519,3 @@ int ListHtmlDump (List* list)
     fprintf(log_html, "</pre>");
     return OK;
 }
-
-#define NEXT            list->lstelem[elem].next
-#define DATA(elem_num)  list->lstelem[elem_num].data
-#define PREV            list->lstelem[tmp_elem].prev 
-
-int RepeatCleaner (List* list, int elem)
-{
-    int elem_strlen = strlen(list->lstelem[elem].data);
-    int cur_elem    = list->lstelem[elem].next;
-    int tmp_elem    = -3;
-    
-    while (cur_elem != -2)
-    {
-        int cur_strlen = strlen(list->lstelem[cur_elem].data);
-        int max_strlen = (cur_strlen > elem_strlen) ? cur_strlen:elem_strlen;
-        
-        if (strncmp(DATA(elem), DATA(cur_elem), max_strlen) == EQUAL)
-        {
-            tmp_elem = cur_elem;
-            cur_elem = list->lstelem[cur_elem].next;
-            list->lstelem[elem].amount += list->lstelem[tmp_elem].amount;
-            ListDelete(list, tmp_elem);
-        }
-        else
-        {
-            cur_elem = list->lstelem[cur_elem].next;
-        }
-    }
-    
-    if (list->lstelem[elem].next == -2)
-        return 0;
-    if (list->lstelem[list->lstelem[elem].next].next == -2)//end of list
-        return 0;
-    
-    RepeatCleaner(list, list->lstelem[elem].next);
-    
-    return 0;
-}
-
-#undef NEXT
-#undef DATA
-#undef PREV

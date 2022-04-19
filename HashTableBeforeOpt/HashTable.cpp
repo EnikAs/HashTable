@@ -91,32 +91,34 @@ int HashTableFind (HashTable* table, char* word, int wordsize, int key)
     int listnum = table->hashfunc(word, wordsize)%table->size;
     int cur_lst_elem = table->lists[listnum].head;
     
+
     for (int i = 0 ; i < table->lists[listnum].size ; i++)
     {
-        int cur_strlen = strlen(table->lists[listnum].lstelem[cur_lst_elem].data);
-        int max_strlen = (cur_strlen > wordsize) ? cur_strlen:wordsize;
         
-        if (strncmp(word, table->lists[listnum].lstelem[cur_lst_elem].data, max_strlen) == EQUAL)
+        if (wordsize == table->lists[listnum].lstelem[cur_lst_elem].lenght)
         {
-            switch(key)
+            if (strncmp(word, table->lists[listnum].lstelem[cur_lst_elem].data, wordsize) == EQUAL)
             {
-                case PRESENCE:
-                    return YES;
+                switch(key)
+                {
+                    case PRESENCE:
+                        return YES;
 
-                case AMOUNT:
-                    return table->lists[listnum].lstelem[cur_lst_elem].amount; 
+                    case AMOUNT:
+                        return table->lists[listnum].lstelem[cur_lst_elem].amount; 
 
-                case INSERT:
-                    table->lists[listnum].lstelem[cur_lst_elem].amount += 1;
-                    return 0;
+                    case INSERT:
+                        table->lists[listnum].lstelem[cur_lst_elem].amount += 1;
+                        return 0;
 
-                case DELETE:
-                    ListDelete(&(table->lists[listnum]), cur_lst_elem);
-                    return 0;
+                    case DELETE:
+                        ListDelete(&(table->lists[listnum]), cur_lst_elem);
+                        return 0;
 
-                default:
-                    printf("INCORRECT KEY IN HASHTABLEFIND FUNCTION!!!!!!!!!!!!!!!\n");
-                    return -1;
+                    default:
+                        printf("INCORRECT KEY IN HASHTABLEFIND FUNCTION!!!!!!!!!!!!!!!\n");
+                        return -1;
+                }
             }
         }
         cur_lst_elem = table->lists[listnum].lstelem[cur_lst_elem].next;
@@ -131,7 +133,7 @@ int HashTableFind (HashTable* table, char* word, int wordsize, int key)
             return 0; 
 
         case INSERT:
-            ListInsertTail( &(table->lists[listnum]), word);
+            ListInsertTail( &(table->lists[listnum]), word, wordsize);
             return 0;
         
         case DELETE:
@@ -171,16 +173,6 @@ int HashTableDump (HashTable* table)
     if (sys_ret != 0)
     {
         printf("Error was detected in \"system\" function\n");
-    }
-
-    return 0;
-}
-
-int HashTableRepeatCleaner (HashTable* table)
-{
-    for (int i = 0 ; i < table->size ; i++)
-    {
-        RepeatCleaner(&(table->lists[i]), table->lists[i].head);
     }
 
     return 0;
@@ -307,7 +299,7 @@ int get_one_command (Commands* com, buffer* buf)
 
     buf->tmp_pos += 1;
 
-    com[buf->words_cunt].lenght = ((char*)buf->buffer + buf->tmp_pos) - com[buf->words_cunt].command;
+    com[buf->words_cunt].lenght = ((char*)buf->buffer + buf->tmp_pos) - com[buf->words_cunt].command - 1;
 
     buf->words_cunt += 1;
 

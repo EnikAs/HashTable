@@ -14,7 +14,6 @@ int main()
 
     InpData = init_all_commands(input_file);
 
-    //printf("%d - words counter in main before for cycle\n", InpData->buf->words_cunt);
     for (int i = 0 ; i < InpData->buf->words_cunt + 1; i++)
     {
         if (InpData->com[i].command != NULL)
@@ -23,18 +22,22 @@ int main()
         }
     }
 
-    //HashTableDump(table);
-
-    //char str[7] = "bitch.";
-    //int am = HashTableFind(table, str, 7, AMOUNT);
-    //printf("%d - ammount of \"%s\"\n", am, str);
-    
-    /*
-    for (int i = 0 ; i < table->size ; i++)
+    for(int k = 0 ; k < 10 ; k ++)
     {
-        printf("%d,", table->lists[i].size);
+        int counter = 0;
+        
+        for (int i = 0 ; i < InpData->buf->words_cunt + 1; i++)
+        {
+            if (InpData->com[i].command != NULL)
+            {
+                if (HashTableFind(table, InpData->com[i].command, InpData->com[i].lenght, PRESENCE) != YES)
+                {
+                    counter += 1;
+                    printf("%d ", counter);
+                }
+            }
+        }
     }
-    */
 
     HashTableDtor(table);
 
