@@ -289,7 +289,7 @@ int get_one_command (Commands* com, buffer* buf)
 
 #undef CUR_SYM
 
- unsigned long long murmurHash (char * word, int leng)
+unsigned long long murmurHash (char * word, int leng)
 {
     const unsigned int m = 0x5bd1e995;
     const unsigned int seed = 0;
@@ -350,16 +350,6 @@ unsigned long long ROR (unsigned long long H)
     H = H1 | H2;
 
     return H;
-}
-
-long long compute_golden_lut_intel(char* pTbl, uint32_t n)
-{
-    uint64_t R = 1;
-    for (uint32_t i = 0; i < n << 1; ++i)
-    {
-        pTbl[i] = (uint32_t)R;
-        R = _mm_crc32_u64(R, 0);
-    }
 }
 
 unsigned long long crc_hash(char* src, int leng)
