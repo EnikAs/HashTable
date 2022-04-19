@@ -40,41 +40,35 @@ int HashTableDtor (HashTable* table)
 
 int HashTableFind (HashTable* table, char* word, int wordsize, int key)
 {
-    int listnum = table->hashfunc((char*)word, wordsize)%table->size;
+    int listnum = (table->hashfunc((char*)word, wordsize)) % (table->size);
     int cur_lst_elem = table->lists[listnum].head;
-
-    //PRINT_LINE
 
     for (int i = 0 ; i < table->lists[listnum].size ; i++)
     {
-        if (wordsize == table->lists[listnum].lstelem[cur_lst_elem].lenght)
+        __m256i comp_res = _mm256_cmpeq_epi8(*((__m256i*)word), *((__m256i*)(CUR_DATA)));
+
+        if (_mm256_movemask_epi8(comp_res) == EQUAL_MASK)
         {
-            __m256i comp_res = _mm256_cmpeq_epi8(*((__m256i*)word), *((__m256i*)(CUR_DATA)));
-
-            if (_mm256_movemask_epi8(comp_res) == EQUAL_MASK)
+            switch(key)
             {
-                switch(key)
-                {
-                    case PRESENCE:
-                        return YES;
+                case PRESENCE:
+                    return YES;
 
-                    case AMOUNT:
-                        return table->lists[listnum].lstelem[cur_lst_elem].amount; 
+                case AMOUNT:
+                    return table->lists[listnum].lstelem[cur_lst_elem].amount; 
 
-                    case INSERT:
-                        table->lists[listnum].lstelem[cur_lst_elem].amount += 1;
-                        return 0;
+                case INSERT:
+                    table->lists[listnum].lstelem[cur_lst_elem].amount += 1;
+                    return 0;
 
-                    case DELETE:
-                        ListDelete(&(table->lists[listnum]), cur_lst_elem);
-                        return 0;
+                case DELETE:
+                    ListDelete(&(table->lists[listnum]), cur_lst_elem);
+                    return 0;
 
-                    default:
-                        printf("INCORRECT KEY IN HASHTABLEFIND FUNCTION!!!!!!!!!!!!!!!\n");
-                        return -1;
-                }
+                default:
+                    printf("INCORRECT KEY IN HASHTABLEFIND FUNCTION!!!!!!!!!!!!!!!\n");
+                    return -1;
             }
-            
         }
         cur_lst_elem = table->lists[listnum].lstelem[cur_lst_elem].next;
     }

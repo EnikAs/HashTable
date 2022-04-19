@@ -14,46 +14,28 @@ int main()
 
     InpData = init_all_commands(input_file);
 
-    //printf("%s\n", (char*)&(InpData->com[0].command));
+    int words_number = InpData->buf->words_cunt;
 
-    //HashTableInsert(table, (char*)&(InpData->com[0].command), InpData->com[0].lenght);
-
-    //printf("%d - words counter in main before for cycle\n", InpData->buf->words_cunt);
-    
-    for (int i = 0 ; i < InpData->buf->words_cunt + 1; i++)
+    for (int i = 0 ; i < words_number; i++)
     {
-        if (&(InpData->com[i].command) != NULL)
-        {
-            HashTableInsert(table, (char*)&(InpData->com[i].command), InpData->com[i].lenght);
-        }
+       HashTableFind(table, (char*)&(InpData->com[i].command), InpData->com[i].lenght, INSERT);  
     }
     
     for(int k = 0 ; k < 10 ; k ++)
     {
-        for (int i = 0 ; i < InpData->buf->words_cunt + 1; i++)
+        for (int i = 0 ; i < words_number; i++)
         {
-            if (&(InpData->com[i].command) != NULL)
-            {
-                if (HashTableFind(table, (char*)&(InpData->com[i].command), InpData->com[i].lenght, PRESENCE)!=YES)
-                    printf("jopa");
-            }
+            int check = HashTableFind(table, (char*)&(InpData->com[i].command), InpData->com[i].lenght, PRESENCE);
+            //if (check != YES)
+            //    printf("hopa");
         }
     }
     
-    //HashTableDump(table);
-
     //char str[7] = "bitch.";
     //__m256i* word = HashTableWordTransform(str);
     //int am = HashTableFind(table, (char*)word, 6, AMOUNT);
     //printf("%d - ammount of \"%s\"\n", am, str);
     
-    /*
-    for (int i = 0 ; i < table->size ; i++)
-    {
-        printf("%d,", table->lists[i].size);
-    }
-    */
-
     HashTableDtor(table);
 
     free(InpData->com);
