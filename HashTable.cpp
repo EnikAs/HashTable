@@ -236,6 +236,9 @@ int buffer_init (buffer* buf, FILE* file_stream)
 Commands* commands_init (buffer* buf)
 {
     Commands* com = (Commands*) aligned_alloc(sizeof(Commands), buf->words_cunt * sizeof(Commands));// СТАЛО
+  
+    //memset(com, 0, buf->words_cunt * sizeof(Commands));
+  
     if (com == NULL)
     {   
         printf("COMMANDS ARRAY MEMORY CALLOCATION ERROR!!!");
@@ -263,25 +266,22 @@ int get_all_commands (Commands* com, buffer* buf)
 
 int get_one_command (Commands* com, buffer* buf)
 {
+    com[buf->words_cunt].command = _mm256_setzero_si256();
+
     int m_pos = 0;
+
+    char* com_ptr = (char*)&(com[buf->words_cunt].command);
 
     while(CUR_SYM != '\n' && CUR_SYM != '\0' && CUR_SYM != ' ')
     {
-        *((char*)&(com[buf->words_cunt].command) + m_pos) = CUR_SYM;
+        *(com_ptr + m_pos) = CUR_SYM;
         m_pos += 1;
         buf->tmp_pos += 1;
     }
 
     com[buf->words_cunt].lenght = m_pos;
-    
-    for (; m_pos < 32 ; m_pos++)
-    {
-        *((char*)&(com[buf->words_cunt].command) + m_pos) = 0;
-    }
 
     buf->tmp_pos += 1;
-
-    //printf("%s %d\n", (char*)&(com[buf->words_cunt].command), com[buf->words_cunt].lenght);
 
     buf->words_cunt += 1;
 
@@ -356,4 +356,24 @@ unsigned long long ROR (unsigned long long H)
     H = H1 | H2;
 
     return H;
+}
+
+long long compute_golden_lut_intel(char* pTbl, uint32_t n)
+{
+    uint64_t R = 1;
+    for (uint32_t i = 0; i < n << 1; ++i)
+    {
+        pTbl[i] = (uint32_t)R;
+        R = _mm_crc32_u64(R, 0);
+    }
+}
+
+unsigned long long crc_hash(char* src, int leng)
+{
+	uint64_t answ = 0;
+
+	for (int i = 0; i != 4; i++)
+		answ = _mm_crc32_u64(answ, ((uint64_t *)src)[i]);
+
+	return (unsigned long long)answ;
 }

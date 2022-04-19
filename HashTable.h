@@ -3,6 +3,8 @@
 
 #include "listfunc.h"
 #include <immintrin.h>
+#include <string.h>
+
 struct HashTable
 {
     List* lists   = {};
@@ -66,7 +68,6 @@ unsigned long long HashFunc5        (char* word, int leng);  //тут все у�
 
 unsigned long long murmurHash       (char * word, int leng);
 
-
 int HashTableFind                   (HashTable* table, char* word, int wordsize, int key);
 
 int HashTableInsert                 (HashTable* table, char* word, int wordsize);
@@ -75,7 +76,7 @@ int HashTableDump                   (HashTable* table);
 
 int HashTableRepeatCleaner          (HashTable* table);
 
-__m256i* HashTableWordTransform (char* word);
+__m256i* HashTableWordTransform     (char* word);
 
 TableInputData*   init_all_commands (FILE* file_stream);
 
@@ -90,5 +91,7 @@ int         get_all_commands        (Commands* com, buffer* buf);
 int         get_one_command         (Commands* com, buffer* buf);
 
 unsigned long long ROR              (unsigned long long H);
+
+unsigned long long crc_hash                  (char* src, int leng);
 
 #endif

@@ -8,7 +8,7 @@ int main()
     if (input_file == NULL)
         printf("Shit happends, incorrect file name!\n");
 
-    HashTable* table = HashTableInit(10, 20, &murmurHash);
+    HashTable* table = HashTableInit(20000, 100, &crc_hash);
 
     TableInputData* InpData = NULL;
 
@@ -25,6 +25,18 @@ int main()
         if (&(InpData->com[i].command) != NULL)
         {
             HashTableInsert(table, (char*)&(InpData->com[i].command), InpData->com[i].lenght);
+        }
+    }
+    
+    for(int k = 0 ; k < 10 ; k ++)
+    {
+        for (int i = 0 ; i < InpData->buf->words_cunt + 1; i++)
+        {
+            if (&(InpData->com[i].command) != NULL)
+            {
+                if (HashTableFind(table, (char*)&(InpData->com[i].command), InpData->com[i].lenght, PRESENCE)!=YES)
+                    printf("jopa");
+            }
         }
     }
     
