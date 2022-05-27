@@ -85,3 +85,7 @@ unsigned long long HashFunc4 (char* word, int leng)
 ## Вывод 
 
 Используйте хорошие хеш функции!~~A не вcякое говно...~~
+
+## Upd
+
+Так-же я оптимизировал эту хеш-таблицу (см ветку "optimisation")
